@@ -79,7 +79,7 @@ Essa organização ajuda bastante, no entanto, é provável que se a aplicação
 
 ## 2.1. Observações
 
-Construir uma aplicação com uma arquitetura de camadas facilita o entendimento de como cada parte da aplicação comunica com as demais, reduz a complexidade dos testes e também facilita a entrada de novos membros na equipe. Uma equipe que segue padrões claros e bem conhecidos no mercado deve conseguir, com menor esforço, realizar treinamentos para novos integrantes.
+Construir uma aplicação com uma arquitetura de camadas facilita o entendimento de como cada parte da aplicação comunica com as demais, reduz a complexidade dos testes e também facilita a entrada de novos membros na equipe. Uma equipe que segue padrões claros e bem conhecidos no mercado deve conseguir, com menor esforço, realizar treinamentos para novos integrantes e utilizar bibliotecas de terceiros com maior facilidade. Vale a pena mencionar que, em relação ao php, desde 2009 existe um grupo, PHP-FIG<sup>[4](#phpfig)</sup>, responsável por definir os padrões de desenvolvimento do php, não relacionado diretamente com a construção da linguagem, mas sim, sua utilização de modo adequado para construção de bibliotecas e aplicações.
 
 ## 2.2. Aviso importante
 
@@ -91,7 +91,7 @@ O requisitos são:
 
 * php (versão 7 ou a mais nova que conseguir)
 * Um bom editor de código (vscode é uma dica)
-* composer <sup id="backComposer">[4](#composer)</sup>
+* composer <sup id="backComposer">[5](#composer)</sup>
 
 ## 2.4. Estrutura de pastas
 
@@ -124,22 +124,21 @@ Os elementos da estrutura de pasta serão detalhados a medida que a aplicação 
 
 ## 2.5. *Entry point*
 
-Uma aplicação feita em **C** ou **C++** contém um ponto de entrada chamado `main`, em **Java** o ponto de entrada é um método também chamado `main`.  O arquivo **index.php** em nossa estrutura, atuará como um *entry point*<sup>[5](#entrypoint)</sup> da aplicação, toda requisição será direcionada a ele, de forma que atue como um *Front Controller*<sup>[6](#fcontroller)</sup>.
+Uma aplicação feita em **C** ou **C++** contém um ponto de entrada chamado `main`, em **Java** o ponto de entrada é um método também chamado `main`.  O arquivo **index.php** em nossa estrutura, atuará como um *entry point*<sup>[6](#entrypoint)</sup> da aplicação, toda requisição será direcionada a ele, de forma que atue como um *Front Controller*<sup>[7](#fcontroller)</sup>.
 
 
 ## 2.6. Gestão de dependências
 
-Cada linguagem de programação costumar ter seu proprio gerenciador de dependências, Um gerenciador de dependências facilita a adição de bibliotecas de terceiros a nossa aplicação, permitindo definir versões e realizar atualizações automaticamente. Ao desenvolver uma aplicação em geral não estamos interessados em criar todo o código que utilizaremos, é bastante comum utilizar bibliotecas livres e bastante estáveis, isso acelera o desenvolvimento e reduz a quantidade de testes necessários. Para o **php** utilizaremos o **Composer**<sup>[7](#wcomposer)</sup>. Os arquivos **composer.json**, **composer.lock** e a pasta **vendor** serão utilizados pelo Composer.
+Cada linguagem de programação costumar ter seu proprio gerenciador de dependências, Um gerenciador de dependências facilita a adição de bibliotecas de terceiros a nossa aplicação, permitindo definir versões e realizar atualizações automaticamente. Ao desenvolver uma aplicação em geral não estamos interessados em criar todo o código que utilizaremos, é bastante comum utilizar bibliotecas livres e bastante estáveis, isso acelera o desenvolvimento e reduz a quantidade de testes necessários. Para o **php** utilizaremos o **Composer**<sup>[8](#wcomposer)</sup>. Os arquivos **composer.json**, **composer.lock** e a pasta **vendor** serão utilizados pelo Composer.
 
 ## 2.7. Configuração local
 
-O arquivo **config.local.php** conterá variáveis de ambiente. Este arquivo costuma ser utilizado para adição de senhas e usuários para manipulação de banco de dados e flags para habilitar/desabilitar logs. Esse arquivo, em conjunto com a pasta **vendor** devem ser ignorados em VCS's<sup>[8](#vcs)</sup>.
+O arquivo **config.local.php** conterá variáveis de ambiente. Este arquivo costuma ser utilizado para adição de senhas e usuários para manipulação de banco de dados e flags para habilitar/desabilitar logs. Esse arquivo, em conjunto com a pasta **vendor** devem ser ignorados em VCS's<sup>[9](#vcs)</sup>.
 
 
 ## 2.8. Rodando a aplicação
 
-Para rodar a aplicação utilizaremos o servidor web embutido do php<sup>[9](#phpcli)</sup>. Crie a estrutura da ([Figura 2.2](#fig2dot2)) e no arquivo **index.php** coloque o código do ([Exemplo 2.1](#ex2dot1)). Com o terminal dentro da pasta **app** rode o comando `php -S localhost:4200 -t public` e acesse no navegador pela url [localhost:4200](http://localhost:4200).
-
+Para rodar a aplicação utilizaremos o servidor web embutido do php<sup>[10](#phpcli)</sup>. Crie a estrutura da ([Figura 2.2](#fig2dot2)) e no arquivo **index.php** coloque o código do ([Exemplo 2.1](#ex2dot1)). Com o terminal dentro da pasta **app** rode o comando `php -S localhost:4200 -t public` e acesse no navegador pela url [localhost:4200](http://localhost:4200).
 
 <sup id="fig2dot2"></sup>
 ```sh
@@ -162,43 +161,158 @@ echo $_SERVER['REQUEST_URI'];
 
 Tudo que for digitado após localhost:4200 (por exemplo, **localhost:4200/testando/aaa**) no navegador será exibido na página (por exemplo, **/testando/aaa**). Isso permitirá, futuramente, que a aplicação trabalhe a requisição feita e retorne o recurso correto.
 
+## 2.9. Codificação
+
+Antes de iniciar a construção dos códigos é recomendada a leitura das PSR's [1](https://www.php-fig.org/psr/psr-1/) e [2](https://www.php-fig.org/psr/psr-2/).
+
 ---
 <center> Notas de Rodapé </center>
 
-<b id="composer">4</b> Como baixar o composer. [[saber mais](https://getcomposer.org/download/)]
+<b id="composer">4</b> *PHP Framework Interop Froup*. [[saber mais](https://www.php-fig.org/)]
 
-<b id="entrypoint">5</b> O que é um *Entry point*? [[saber mais](https://en.wikipedia.org/wiki/Entry_point)]
+<b id="composer">5</b> Como baixar o composer. [[saber mais](https://getcomposer.org/download/)]
 
-<b id="fcontroller">6</b> O que é o padrão *Front Controller*? [[saber mais](https://en.wikipedia.org/wiki/Front_controller)]
+<b id="entrypoint">6</b> O que é um *Entry point*? [[saber mais](https://en.wikipedia.org/wiki/Entry_point)]
 
-<b id="vcs">7</b> O que é o Composer? [[saber mais](https://getcomposer.org/doc/)]
+<b id="fcontroller">7</b> O que é o padrão *Front Controller*? [[saber mais](https://en.wikipedia.org/wiki/Front_controller)]
 
-<b id="vcs">8</b> O que é um Sistema de Controle de Versão?. [[saber mais](https://en.wikipedia.org/wiki/Version_control)]
+<b id="vcs">8</b> O que é o Composer? [[saber mais](https://getcomposer.org/doc/)]
 
-<b id="phpcli">8</b> *PHP Built-in Server*. [[saber mais](https://secure.php.net/manual/pt_BR/features.commandline.webserver.php)]
+<b id="vcs">9</b> O que é um Sistema de Controle de Versão?. [[saber mais](https://en.wikipedia.org/wiki/Version_control)]
+
+<b id="phpcli">10</b> *PHP Built-in Server*. [[saber mais](https://secure.php.net/manual/pt_BR/features.commandline.webserver.php)]
 
 ---
 
-# 3. Classes e Objetos
+# 3. Classes, objetos e carregamento
 
 ## 3.1. Uma história de como incluir classes
 
-Era bastante comum (e, infelizmente, ainda é) utilizar diretamente os construtores de linguagem `require`, `require_once`,  `include` e `include_once`. Apesar de ser possível incluir arquivos de classes dessa forma, o php possui formas mais adequadas de incluir as dependências de classes. Em 2004 (versão 5.0), foi introduzida a função mágica<sup>[10](#phpmagic)</sup> `__autoload`<sup>[11](#fautoload)</sup>, esta função, quando declarada, é chamada automaticamente sempre que uma classe ainda não incluída é usada. Em 2005 (versão 5.1), foi introduzida uma família de funções `spl_autoload*`<sup>[12](#fsplautoload)</sup> para substutir a função `__autoload`, permitindo o registro de múltiplas funções de inclusão de classes e, consequentemente, facilitando a utilização de bibliotecas de terceiros (a partir do uso de funções de inclusão de classe de terceiros). 
-Para evitar conflitos de classes com mesmo nome, em 2009 (versão 5.3), o php adicionou o recurso de namespace<sup>[13](#namespaces)</sup>. Com o surgimento do Composer em 2012 e a formalização das propostas de *autoload*, padronizou-se o modelo de carregamentos de classes conforme PSR-4<sup>[14](#psr4)</sup>.
+Era bastante comum (e, infelizmente, ainda é) utilizar diretamente os construtores de linguagem `require`, `require_once`,  `include` e `include_once`. Apesar de ser possível incluir arquivos de classes dessa forma, o php possui formas mais adequadas de incluir as dependências de classes. Em 2004 (versão 5.0), foi introduzida a função mágica<sup>[11](#phpmagic)</sup> `__autoload`<sup>[12](#fautoload)</sup>, esta função, quando declarada, é chamada automaticamente sempre que uma classe ainda não incluída é usada. Em 2005 (versão 5.1), foi introduzida uma família de funções `spl_autoload*`<sup>[13](#fsplautoload)</sup> para substutir a função `__autoload`, permitindo o registro de múltiplas funções de inclusão de classes e, consequentemente, facilitando a utilização de bibliotecas de terceiros (a partir do uso de funções de inclusão de classe de terceiros). 
+Para evitar conflitos de classes com mesmo nome, em 2009 (versão 5.3), o php adicionou o recurso de namespace<sup>[14](#namespaces)</sup>. Com o surgimento do Composer em 2012 e a formalização das propostas de *autoload*, padronizou-se o modelo de carregamentos de classes conforme PSR-4<sup>[15](#psr4)</sup>.
+
+A ([Figura 3.1](#fig3dot1)) apresenta a maneira padrão de definição de dependências da classe. Note que a classe  `ProductEntity` possui um namespace declarado no início do arquivo (`TutorialMvc\Model`) e a classe `ProductController` também (`TutorialMvc\Controller`), esta ainda define como será o uso de `ProductEntity` por meio do operador `use`<sup>[16](#useop)</sup>.
+
+
+<sup id="fig3dot1"></sup>
+```php
+<?php
+// src/Model/ProductEntity.php
+
+namespace TutorialMvc\Model;
+
+class ProductEntity
+{
+//..
+```
+```php
+
+<?php
+// src/Model/ProductController.php
+
+namespace TutorialMvc\Controller;
+
+use TutorialMvc\Model\ProductEntity;
+
+class ProductController
+{
+
+    private $productEntity;
+
+    public function __construct(ProductEntity $pe)
+    {
+        $this->productEntity = $pe;
+    }
+    // ...
+```
+<center><sup>Figura 3.1. Uso correto de namespaces</sup></center>
+
+## 3.2. Utilizando o PSR-4 via Composer
+
+Utilizaremos o *autoload* fornecido pelo Composer, assim, não precisaremos definir nossas próprias funções com `spl_autoload_register` (o Composer fará isso por nós). Antes de iniciar o exemplo, é fortemente aconselhado que seja feita a leitura da [PSR-4](https://www.php-fig.org/psr/psr-4/). O ([Exemplo 3.1](#ex3dot1)) indica como inicializar o composer e o ([Exemplo 3.2](#ex3dot2)) mostra como indicar que o projeto utiliza o PSR-4.
+
+<sup id="ex3dot1"></sup>
+```sh
+~/vhosts/app$ composer init
+Welcome to the Composer config generator
+This command will guide you through creating your composer.json config.
+Package name (<vendor>/<name>) [marciodojr/app]: mdojr/tutorial-mvc
+Description []: Criando uma aplicação mvc com php
+Author [Márcio Dias <marciojr91@gmail.com>, n to skip]:
+Minimum Stability []:
+Package Type (e.g. library, project, metapackage, composer-plugin) []: project
+License []: MIT
+
+Define your dependencies.
+
+Would you like to define your dependencies (require) interactively [yes]? no
+Would you like to define your dev dependencies (require-dev) interactively [yes]? no
+{
+    "name": "mdojr/tutorial-mvc",
+    "description": "Criando uma aplicação mvc com php",
+    "type": "project",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Márcio Dias",
+            "email": "marciojr91@gmail.com"
+        }
+    ],
+    "require": {}
+}
+
+Do you confirm generation [yes]?
+~/vhosts/app$
+```
+<center><sup>Exemplo 3.1. Inicializando o projeto com o composer</sup></center>
+
+<sup id="ex3dot2"></sup>
+ ```json
+{
+    // ...
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "TutorialMvc\\": "src"
+        }
+    }
+}
+ ```
+
+ ```sh
+ ~/vhosts/app$ composer update
+ ```
+<center><sup>Exemplo 3.2. Adições realizadas no arquivo composer.json</sup></center>
+
+Note que após executar este procedimento, será criado o arquivo **composer.json** e a pasta **vendor** ([Figura 3.2](#fig3dot2)). A partir deste ponto todas as bibliotecas de terceiro instaladas pelo composer e as classes criadas por nós em **src** com namespace iniciado com  `TutorialMvc\`, quando usadas, serão incluídas corretamente.
+
+
+<sup id="fig3dot2"></sup>
+```sh
+app/
+    public/
+        index.php # entry point
+    composer.json # criado após executar o composer init
+    vendor/
+```
+<center><sup>Figura 3.2. Estrutura após executar o comando composer init e composer update</sup></center>
 
 
 ---
 <center>Notas de Rodapé</center>
 
+<b id="phpmagic">11</b> O que é função mágica? [[saber mais](http://php.net/manual/pt_BR/language.oop5.magic.php)]
 
-<b id="phpmagic">10</b> O que é função mágica? [[saber mais](http://php.net/manual/pt_BR/language.oop5.magic.php)]
+<b id="fautoload">12</b> O que é a função `__autoload`? [[saber mais](http://php.net/manual/pt_BR/function.autoload.php)]
 
-<b id="fautoload">11</b> O que é a função __autoload? [[saber mais](http://php.net/manual/pt_BR/function.autoload.php)]
+<b id="fsplautoload">13</b> O que são as funções `spl_autoload*`? [[saber mais](http://php.net/manual/pt_BR/function.spl-autoload.php)]
 
-<b id="fsplautoload">12</b> O que são as funções spl_autoload? [[saber mais](http://php.net/manual/pt_BR/function.spl-autoload.php)]
+<b id="namespaces">14</b> O que é namespace? [[saber mais](http://php.net/manual/pt_BR/language.oop5.magic.php)]
 
-<b id="namespaces">13</b> O que é namespace? [[saber mais](http://php.net/manual/pt_BR/language.oop5.magic.php)]
+<b id="psr4">15</b> *PSR-4: Autoloader* [[saber mais](https://www.php-fig.org/psr/psr-4/)]
 
-<b id="psr4">14</b> *PSR-4: Autoloader* [[saber mais](https://www.php-fig.org/psr/psr-4/)]
+<b id="psr4">16</b> O operador `use` [[saber mais](http://php.net/manual/pt_BR/language.namespaces.importing.php)]
 
 ---
+
+# 4. Roteamento, que camada faz isso?
