@@ -107,12 +107,12 @@ app/
         Model/
         Controller/ 
         View/
+        routes.php
     public/
         img/
         js/
         css/
         index.php # entry point
-    routes.php
     composer.json
     composer.lock
     vendor/
@@ -264,6 +264,7 @@ Would you like to define your dev dependencies (require-dev) interactively [yes]
 Do you confirm generation [yes]?
 ~/vhosts/app$
 ```
+
 <center><sup>Exemplo 3.1. Inicializando o projeto com o composer</sup></center>
 
 <sup id="ex3dot2"></sup>
@@ -282,9 +283,19 @@ Do you confirm generation [yes]?
  ```sh
  ~/vhosts/app$ composer update
  ```
+
+```php
+<?php
+// app/public/index.php
+
+require '../vendor/autoload.php'; // autoloader do Composer
+// ...
+
+```
+
 <center><sup>Exemplo 3.2. Adições realizadas no arquivo composer.json</sup></center>
 
-Note que após executar este procedimento, será criado o arquivo **composer.json** e a pasta **vendor** ([Figura 3.2](#fig3dot2)). A partir deste ponto todas as bibliotecas de terceiro instaladas pelo composer e as classes criadas por nós em **src** com namespace iniciado com  `TutorialMvc\`, quando usadas, serão incluídas corretamente.
+Note que após executar este procedimento, será criado o arquivo **composer.json** e a pasta **vendor** ([Figura 3.2](#fig3dot2)), é dentro da pasta vendor que as dependências e o *autoloader* ficam. A partir deste ponto, todas as bibliotecas de terceiros e, as classes criadas por nós com namespace iniciado com  `TutorialMvc\`, quando usadas, serão incluídas corretamente.
 
 
 <sup id="fig3dot2"></sup>
@@ -393,20 +404,72 @@ Utilizaremos o composer para instalar um router. O ([Exemplo 4.1](#ex4dot1)) apr
 
 <sup id="ex4dot1"></sup>
 ```sh
-~/vhosts/app$ composer require nikic/fast-route
-Using version ^1.3 for nikic/fast-route
+~/vhosts/app$ composer require klein/klein
 ./composer.json has been updated
 Loading composer repositories with package information
 Updating dependencies (including require-dev)
 Package operations: 1 install, 0 updates, 0 removals
-  - Installing nikic/fast-route (v1.3.0): Loading from cache
+  - Installing klein/klein (v2.1.2): Loading from cache
 Writing lock file
 Generating autoload files
 ~/vhosts/app$
 ```
-<center><sup>Exemplo 4.1. Instalação do fast-route</sup></center>
+<center><sup>Exemplo 4.1. Instalação do klein</sup></center>
 
-## 4.5 Usando o *Fast Route*
+## 4.5 Usando o *Klein*
+
+Vamos criar uma rota simples para demonstrar o funcionamento do router. Primeiro, crie um arquivo chamado **routes.php** com a declaração de uma rota em **app/src/** depois, inclua-o no arquivo index.php. Por fim, execute o comando para rodar o servidor embutido do php e digite a url no navegador [localhost:4200/produtos](http://localhost:4200/produtos). O ([Exemplo 4.2](#ex4dot2)) apresenta o conteúdo adicionado em cada arquivo.
+
+<sup id="#ex4dot2"></sup>
+```sh
+# estrutura de pastas
+app/
+    public/
+        index.php
+    src/
+        routes.php # crie este arquivo
+    composer.json
+    composer.lock
+```
+
+
+```php
+<?php
+// app/public/index.php
+
+require '../vendor/autoload.php';
+
+$klein = new \Klein\Klein();
+
+require '../src/routes.php';
+
+$klein->dispatch();
+
+```
+```php
+<?php
+// app/src/routes.php
+
+// GET /produtos: retorna uma lista de produtos em json
+$klein->respond('GET', '/produtos', function ($request, $response) {
+    $response->header('Content-Type', 'application/json');
+    
+    $data = json_encode([
+        ['id' =>1, 'name' => 'batom'],
+        ['id' =>2, 'name' => 'perfume'],
+        ['id' =>3, 'name' => 'bolacha'],
+        ['id' =>4, 'name' => 'Tomate'],
+        ['id' =>5, 'name' => 'Felicidade'],
+        ['id' =>6, 'name' => 'Conhecimento']
+    ]);
+
+    $response->body($data);
+    $response->send();
+});
+```
+<center><sup>Exemplo 4.2. Criando a primeira rota</sup></center>
+
+Observação: Note que, como estamos utilizando o *autoload* do Composer, ao instalar o *klein* não foi necessário registrá-lo e nem incluí-lo via `require` ou simular.
 
 ---
 <center>Notas de Rodapé</center>
