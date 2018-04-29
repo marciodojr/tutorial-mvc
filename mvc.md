@@ -163,7 +163,7 @@ Tudo que for digitado após localhost:4200 (por exemplo, **localhost:4200/testan
 
 ## 2.9. Codificação
 
-Antes de iniciar a construção dos códigos é recomendada a leitura das PSR's [1](https://www.php-fig.org/psr/psr-1/) e [2](https://www.php-fig.org/psr/psr-2/).
+Antes de iniciar a construção dos códigos é recomendada a leitura das [PSR-1](https://www.php-fig.org/psr/psr-1/) e [PSR-2](https://www.php-fig.org/psr/psr-2/).
 
 ---
 <center> Notas de Rodapé </center>
@@ -315,4 +315,106 @@ app/
 
 ---
 
-# 4. Roteamento, que camada faz isso?
+# 4. Roteamento
+
+## 4.1. introdução
+
+Como toda requisição da nossa aplicação passará pelo *entry point*, é necessário definir, a partir dele, quem será responsável por receber as requisições, direcionar para os *controllers* e retornar as respostas. O elemento responsável por realizar essa tarefa é chamado de  ***Router***  e as urls registradas nele, **rotas**. Algumas das vantagens de se utilizar um *Router* são: o uso de urls amigáveis (de fácil memorização e entendimento), ocultamento da estrutura de pastas e arquivos, facilidade em modificar as rotas (em comparação com mudança nos nomes de arquivos e diretórios). A ([Figura 4.1](#fig4dot1)) mostra uma aplicação que não utiliza um *Router* e a ([Figura 4.2](#fig4dot2)) uma aplicação que utiliza.
+
+<sup id="fig4dot1"></sup>
+```
+Client:                  
+GET /produto.php?p=1
+--------------------->
+                      
+            Server:
+            file mapping: produto.php
+            ---------------------------------->
+                                    
+                                             PHP/File system:
+                              find/run produto.php $_GET['p']
+                        <------------------------------------
+                                    
+                                                       Server:
+                                 return response: produto.php
+<------------------------------------------------------------
+```
+<center><sup>Figura 4.1. Requisição em uma aplicação sem entry point</sup></center>
+
+<sup id="fig4dot2"></sup>
+```
+Client:                  
+GET /produto/1
+--------------------->
+                      
+            Server:
+            file mapping: index.php (always)
+            ---------------------------------->
+                                    
+                                                    PHP/Router:
+                        parse request: $_SERVER, $_REQUEST, ...
+                                match route and call controller
+                                                 build response
+                        <--------------------------------------
+                                    
+                                                        Server:
+                                                return response
+<--------------------------------------------------------------
+```
+<center><sup>Figura 3.2. Requição em uma aplicação com entry point</sup></center>
+
+## 4.2. Exemplos de rotas
+
+É bastante comum, ao utilizar um *Router*, definir rotas pela escolha de um padrão (url ou família de urls), um método http de requisição<sup>[17](#httpm)</sup> e uma ação. Por exemplo:
+
+* GET /customers
+    * Possível ação: retornar todos os clientes cadastrados
+* GET /customers?page=1&length=10
+    * Possível ação: retornar os dez primeiros clientes cadastrados 
+* PUT /customers/:id
+    * Possível ação: atualizar os dados do cliente id
+* PATCH /customers/:id
+    * Possível ação: atualizar parcialmente os dados do cliente id
+* POST /customers/1/pagamentos
+    * Possível ação: cadastrar um pagamento do cliente 1
+
+<sup>Observação: o termo ":id" representa um  valor variável, possívelmente um valor númerico. ":id" é chamado de parâmetro de url.</sup>
+
+A definição da url, a escolha do método http e a ação a ser executada é definida pelo desenvolvedor, mas aconselha-se defini-los em confirmidade com o padrão REST<sup>[18](#restm)</sup>.
+
+
+## 4.3 O Router é um Model, um Controller ou uma View?
+
+O *router* não é parte do MVC e, portanto, não deve estar em nossa aplicação. Ele deve ser tratado com uma dependência externa, só é recomendada a construção de um, se sua aplicação possuir uma necessidade muito específica ou para fins didádicos (fora do escopo desse tutorial). Antes de realizar a instalação de um aconselha-se fortemente a leitura da [PSR-7](https://www.php-fig.org/psr/psr-7/).
+
+## 4.4 Instalando o Router
+
+Utilizaremos o composer para instalar um router. O ([Exemplo 4.1](#ex4dot1)) apresenta o processo de instalação.
+
+<sup id="ex4dot1"></sup>
+```sh
+~/vhosts/app$ composer require nikic/fast-route
+Using version ^1.3 for nikic/fast-route
+./composer.json has been updated
+Loading composer repositories with package information
+Updating dependencies (including require-dev)
+Package operations: 1 install, 0 updates, 0 removals
+  - Installing nikic/fast-route (v1.3.0): Loading from cache
+Writing lock file
+Generating autoload files
+~/vhosts/app$
+```
+<center><sup>Exemplo 4.1. Instalação do fast-route</sup></center>
+
+
+## 4.5 Usando o *Fast Route*
+
+---
+<center>Notas de Rodapé</center>
+
+<b id="httpm">17</b> *HTTP Request Methods*. [[saber mais](https://developer.mozilla.org/pt-BR/docs/Web/HTTP/Methods)]
+
+<b id="restm">18</b> *REST Methods*. [[saber mais](http://www.restapitutorial.com/lessons/httpmethods.html)]
+
+
+---
