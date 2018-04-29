@@ -71,7 +71,7 @@ Essa organização ajuda bastante, no entanto, é provável que se a aplicação
 
 <b id="ood">2</b> *S.O.L.I.D*. [[saber mais](http://butunclebob.com/ArticleS.UncleBob.PrinciplesOfOod)]
 
-<b id="mvc">3</b> *Model-View-Controller*. [[saber mais](https://en.wikipedia.org/wiki/Software_development_kit)]
+<b id="mvc">3</b> *Model-View-Controller*. [[saber mais](https://en.wikipedia.org/wiki/Model_view_controller)]
 
 ---
 
@@ -168,7 +168,7 @@ Antes de iniciar a construção dos códigos é recomendada a leitura das PSR's 
 ---
 <center> Notas de Rodapé </center>
 
-<b id="composer">4</b> *PHP Framework Interop Froup*. [[saber mais](https://www.php-fig.org/)]
+<b id="phpfig">4</b> *PHP Framework Interop Froup*. [[saber mais](https://www.php-fig.org/)]
 
 <b id="composer">5</b> Como baixar o composer. [[saber mais](https://getcomposer.org/download/)]
 
@@ -176,7 +176,7 @@ Antes de iniciar a construção dos códigos é recomendada a leitura das PSR's 
 
 <b id="fcontroller">7</b> O que é o padrão *Front Controller*? [[saber mais](https://en.wikipedia.org/wiki/Front_controller)]
 
-<b id="vcs">8</b> O que é o Composer? [[saber mais](https://getcomposer.org/doc/)]
+<b id="wcomposer">8</b> O que é o Composer? [[saber mais](https://getcomposer.org/doc/)]
 
 <b id="vcs">9</b> O que é um Sistema de Controle de Versão?. [[saber mais](https://en.wikipedia.org/wiki/Version_control)]
 
@@ -307,11 +307,11 @@ app/
 
 <b id="fsplautoload">13</b> O que são as funções `spl_autoload*`? [[saber mais](http://php.net/manual/pt_BR/function.spl-autoload.php)]
 
-<b id="namespaces">14</b> O que é namespace? [[saber mais](http://php.net/manual/pt_BR/language.oop5.magic.php)]
+<b id="namespaces">14</b> O que é namespace? [[saber mais](http://php.net/manual/pt_BR/language.namespaces.rationale.php)]
 
 <b id="psr4">15</b> *PSR-4: Autoloader* [[saber mais](https://www.php-fig.org/psr/psr-4/)]
 
-<b id="psr4">16</b> O operador `use` [[saber mais](http://php.net/manual/pt_BR/language.namespaces.importing.php)]
+<b id="useop">16</b> O operador `use` [[saber mais](http://php.net/manual/pt_BR/language.namespaces.importing.php)]
 
 ---
 
