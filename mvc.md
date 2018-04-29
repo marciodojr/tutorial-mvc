@@ -380,7 +380,7 @@ GET /produto/1
 
 <sup>Observação: o termo ":id" representa um  valor variável, possívelmente um valor númerico. ":id" é chamado de parâmetro de url.</sup>
 
-A definição da url, a escolha do método http e a ação a ser executada é definida pelo desenvolvedor, mas aconselha-se defini-los em confirmidade com o padrão REST<sup>[18](#restm)</sup>.
+A definição da url, a escolha do método http e a ação a ser executada é definida pelo desenvolvedor, mas aconselha-se defini-los em conformidade com o padrão REST<sup>[18](#restm)</sup>.
 
 
 ## 4.3 O Router é um Model, um Controller ou uma View?
@@ -405,7 +405,6 @@ Generating autoload files
 ~/vhosts/app$
 ```
 <center><sup>Exemplo 4.1. Instalação do fast-route</sup></center>
-
 
 ## 4.5 Usando o *Fast Route*
 
