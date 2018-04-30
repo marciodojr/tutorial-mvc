@@ -2,9 +2,7 @@
 // app/public/index.php
 
 require '../vendor/autoload.php';
-
-$klein = new \Klein\Klein();
-
+$router = new Slim\App();
 require '../src/routes.php';
 
-$klein->dispatch();
+$router->run();

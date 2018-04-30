@@ -404,19 +404,24 @@ Utilizaremos o composer para instalar um router. O ([Exemplo 4.1](#ex4dot1)) apr
 
 <sup id="ex4dot1"></sup>
 ```sh
-~/vhosts/app$ composer require klein/klein
+~/vhosts/app$ composer require slim/slim
 ./composer.json has been updated
 Loading composer repositories with package information
 Updating dependencies (including require-dev)
-Package operations: 1 install, 0 updates, 0 removals
-  - Installing klein/klein (v2.1.2): Loading from cache
+Package operations: 6 installs, 0 updates, 0 removals
+  - Installing psr/container (1.0.0): Loading from cache
+  - Installing container-interop/container-interop (1.2.0): Loading from cache
+  - Installing nikic/fast-route (v1.3.0): Loading from cache
+  - Installing psr/http-message (1.0.1): Loading from cache
+  - Installing pimple/pimple (v3.2.3): Loading from cache
+  - Installing slim/slim (3.10.0): Downloading (100%)
 Writing lock file
 Generating autoload files
 ~/vhosts/app$
 ```
-<center><sup>Exemplo 4.1. Instalação do klein</sup></center>
+<center><sup>Exemplo 4.1. Instalação do Slim</sup></center>
 
-## 4.5 Usando o *Klein*
+## 4.5 Usando
 
 Vamos criar uma rota simples para demonstrar o funcionamento do router. Primeiro, crie um arquivo chamado **routes.php** com a declaração de uma rota em **app/src/** depois, inclua-o no arquivo index.php. Por fim, execute o comando para rodar o servidor embutido do php e digite a url no navegador [localhost:4200/produtos](http://localhost:4200/produtos). O ([Exemplo 4.2](#ex4dot2)) apresenta o conteúdo adicionado em cada arquivo.
 
@@ -438,38 +443,33 @@ app/
 // app/public/index.php
 
 require '../vendor/autoload.php';
-
-$klein = new \Klein\Klein();
-
+$router = new Slim\App();
 require '../src/routes.php';
 
-$klein->dispatch();
-
+$router->run();
 ```
 ```php
 <?php
 // app/src/routes.php
 
-// GET /produtos: retorna uma lista de produtos em json
-$klein->respond('GET', '/produtos', function ($request, $response) {
-    $response->header('Content-Type', 'application/json');
+// GET /produtos: retorna uma lista de produtos no formato json
+$router->get('/produtos', function ($request, $response) {    
     
-    $data = json_encode([
+    $data = [
         ['id' =>1, 'name' => 'batom'],
         ['id' =>2, 'name' => 'perfume'],
         ['id' =>3, 'name' => 'bolacha'],
         ['id' =>4, 'name' => 'Tomate'],
         ['id' =>5, 'name' => 'Felicidade'],
         ['id' =>6, 'name' => 'Conhecimento']
-    ]);
+    ];
 
-    $response->body($data);
-    $response->send();
+    return $response->withJson($data);
 });
 ```
 <center><sup>Exemplo 4.2. Criando a primeira rota</sup></center>
 
-Observação: Note que, como estamos utilizando o *autoload* do Composer, ao instalar o *klein* não foi necessário registrá-lo e nem incluí-lo via `require` ou similar.
+Observação: Note que, como estamos utilizando o *autoload* do Composer, ao instalar o *slim* não foi necessário registrá-lo e nem incluí-lo via `require` ou similar.
 
 ---
 <center>Notas de Rodapé</center>

@@ -10,7 +10,7 @@
         }
     ],
     "require": {
-        "klein/klein": "^2.1"
+        "slim/slim": "^3.10"
     },
     "autoload": {
         "psr-4": {
