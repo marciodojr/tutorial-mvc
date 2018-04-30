@@ -436,8 +436,6 @@ app/
     composer.json
     composer.lock
 ```
-
-
 ```php
 <?php
 // app/public/index.php
@@ -480,3 +478,66 @@ Observação: Note que, como estamos utilizando o *autoload* do Composer, ao ins
 
 
 ---
+
+# 5. Controllers
+
+## 5.1 Introdução
+
+Finalmente estamos prontos para criar a primeira camada da aplicação MV**C**, mas antes vamos ajustar algumas definições. Ao estudamos a arquitetura MVC, aprendemos que os *controllers* formam a "camada do meio", passando parâmetros das *views* para os *models* e retornando informações dos *models* para as *views*. Em aplicações web isso é traduzido como: a função do *controller* é retornar respostas (preferivelmente uma resposta HTTP) baseado em requisições (preferivelmente uma requisição HTTP).
+
+
+## 5.2 Criando um controller
+
+No nosso caso, quando definimos a ação da rota `/produtos`, nós já realizamos o trabalho  de um *controller* (ou parte do trabalho). Para organizar corretamente a aplicação, vamos criar o controller `TutorialMvc\Controller\ProductController` em **app/src/Controller/ProductController.php**. O ([Exemplo 5.1](#ex5dot1)) apresenta o código e a estrutura de pastas.
+
+
+<sup id="ex5dot1"></sup>
+```sh
+# estrutura de pastas
+app/
+    public/
+        index.php
+    src/
+        Controller/
+            ProductController.php # crie este arquivo
+        routes.php
+    composer.json
+    composer.lock
+```
+```php
+<?php
+// app/src/routes.php
+
+// GET /produtos: retorna uma lista de produtos no formato json
+$router->get('/produtos', 'TutorialMvc\Controller\ProductController:fetch');
+```
+```php
+<?php
+// app/src/Controller/ProductController.php
+
+namespace TutorialMvc\Controller;
+
+class ProductController
+{
+    public function __construct()
+    {
+    }
+
+    public function fetch($request, $response)
+    {
+        $data = [
+            ['id' =>1, 'name' => 'batom'],
+            ['id' =>2, 'name' => 'perfume'],
+            ['id' =>3, 'name' => 'bolacha'],
+            ['id' =>4, 'name' => 'Tomate'],
+            ['id' =>5, 'name' => 'Felicidade'],
+            ['id' =>6, 'name' => 'Conhecimento']
+        ];
+
+        return $response->withJson($data);
+    }
+}
+```
+<center><sup>Exemplo 5.2. Criando um controller</sup></center>
+
+Os métodos de um *controller* que são utilizados no *router* recebem o nome de *actions*.
