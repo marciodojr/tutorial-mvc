@@ -4,7 +4,7 @@
 
 Olá! `o/`, fizemos este documento para explicar para você como é desenvolver uma aplicação MVC seguindo os melhores padrões da comunidade PHP, caso você já conheça, agora é um bom momento para revisar um pouquinho. 
 
-Sabemos que costumar ser um pouco difícil entrar em uma nova equipe e utilizar ferramentas e tecnologias que nunca vimos. Por isso, antes de "botar as mãos na massa" queremos dar a você a oportunidade de praticar os conceitos de orientação a objetos e construção de software em camadas a partir daquilo que você já aprendeu na graduação.
+Sabemos que costuma ser um pouco difícil entrar em uma nova equipe e utilizar ferramentas e tecnologias que nunca vimos. Por isso, antes de "botar as mãos na massa" queremos dar a você a oportunidade de praticar os conceitos de orientação a objetos e construção de software em camadas a partir daquilo que você já aprendeu na graduação.
 
 ## 1.2. Definindo nosso escopo
 
@@ -39,7 +39,7 @@ function filterSomethingFromDatabase($something) {/* ... */}
 ```
 <center><sup>Exemplo 1.1. Possível estrutura de uma aplicação de arquivo único</sup></center>
 
-O grande problema em construir um único arquivo está na dificuldade em dar manutenção e na baixa reusabilidade. A medida que o tempo passa (e novas modificações são feitas), vai ficando cada vez mais difícil entender o que o código faz, aonde é necessário mudar e se, ao mudar, todo o resto continuará funcionando.
+O grande problema em construir um único arquivo está na dificuldade em dar manutenção e na baixa reusabilidade. A medida que o tempo passa (e novas modificações são feitas), vai ficando cada vez mais difícil entender o que o código faz, onde é necessário mudar e se, ao mudar, todo o resto continuará funcionando.
 
 ## 1.4. Variações do arquivo único
 
@@ -83,7 +83,7 @@ Construir uma aplicação com uma arquitetura de camadas facilita o entendimento
 
 ## 2.2. Aviso importante
 
-Construiremos uma aplicação Mvc bastante simples seguido os padrões estabelecidos pela comunidade PHP, no entanto, como o objetivo é manter a didática, não construiremos um framework comercial, mas forneceremos a base para o entendimento de como eles funcionam (pelo menos alguns de seus aspectos mais importantes).
+Construiremos uma aplicação Mvc bastante simples seguindo os padrões estabelecidos pela comunidade PHP, no entanto, como o objetivo é manter a didática, não construiremos um framework comercial, mas forneceremos a base para o entendimento de como eles funcionam (pelo menos alguns de seus aspectos mais importantes).
 
 ## 2.3. Requisitos
 
@@ -372,7 +372,7 @@ GET /produto/1
                                                 return response
 <--------------------------------------------------------------
 ```
-<center><sup>Figura 3.2. Requição em uma aplicação com entry point</sup></center>
+<center><sup>Figura 4.2. Requisição em uma aplicação com entry point</sup></center>
 
 ## 4.2. Exemplos de rotas
 
@@ -420,7 +420,7 @@ Generating autoload files
 
 Vamos criar uma rota simples para demonstrar o funcionamento do router. Primeiro, crie um arquivo chamado **routes.php** com a declaração de uma rota em **app/src/** depois, inclua-o no arquivo index.php. Por fim, execute o comando para rodar o servidor embutido do php e digite a url no navegador [localhost:4200/produtos](http://localhost:4200/produtos). O ([Exemplo 4.2](#ex4dot2)) apresenta o conteúdo adicionado em cada arquivo.
 
-<sup id="#ex4dot2"></sup>
+<sup id="ex4dot2"></sup>
 ```sh
 # estrutura de pastas
 app/
@@ -469,7 +469,7 @@ $klein->respond('GET', '/produtos', function ($request, $response) {
 ```
 <center><sup>Exemplo 4.2. Criando a primeira rota</sup></center>
 
-Observação: Note que, como estamos utilizando o *autoload* do Composer, ao instalar o *klein* não foi necessário registrá-lo e nem incluí-lo via `require` ou simular.
+Observação: Note que, como estamos utilizando o *autoload* do Composer, ao instalar o *klein* não foi necessário registrá-lo e nem incluí-lo via `require` ou similar.
 
 ---
 <center>Notas de Rodapé</center>
