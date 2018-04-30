@@ -103,6 +103,7 @@ Em nosso projeto utilizaremos a seguinte estrutura da ([Figura 2.1](#fig2dot1)).
 app/
     config/
         config.local.php
+        config.php
     src/
         Model/
         Controller/ 
@@ -131,9 +132,9 @@ Uma aplicação feita em **C** ou **C++** contém um ponto de entrada chamado `m
 
 Cada linguagem de programação costumar ter seu proprio gerenciador de dependências, Um gerenciador de dependências facilita a adição de bibliotecas de terceiros a nossa aplicação, permitindo definir versões e realizar atualizações automaticamente. Ao desenvolver uma aplicação em geral não estamos interessados em criar todo o código que utilizaremos, é bastante comum utilizar bibliotecas livres e bastante estáveis, isso acelera o desenvolvimento e reduz a quantidade de testes necessários. Para o **php** utilizaremos o **Composer**<sup>[8](#wcomposer)</sup>. Os arquivos **composer.json**, **composer.lock** e a pasta **vendor** serão utilizados pelo Composer.
 
-## 2.7. Configuração local
+## 2.7. Configurações
 
-O arquivo **config.local.php** conterá variáveis de ambiente. Este arquivo costuma ser utilizado para adição de senhas e usuários para manipulação de banco de dados e flags para habilitar/desabilitar logs. Esse arquivo, em conjunto com a pasta **vendor** devem ser ignorados em VCS's<sup>[9](#vcs)</sup>.
+A pasta **config** contém arquivos de configuração geral (que não muda entre ambientes) e local (que mudam dependendo do ambiente). O arquivo **config.local.php** costuma ser utilizado para adição de senhas e usuários para manipulação de banco de dados e flags para habilitar/desabilitar logs. Esse arquivo, em conjunto com a pasta **vendor** devem ser ignorados em VCS's<sup>[9](#vcs)</sup>.
 
 
 ## 2.8. Rodando a aplicação
@@ -479,14 +480,14 @@ Observação: Note que, como estamos utilizando o *autoload* do Composer, ao ins
 
 ---
 
-# 5. Controllers
+# 5. Controllers e Containers
 
 ## 5.1 Introdução
 
 Finalmente estamos prontos para criar a primeira camada da aplicação MV**C**, mas antes vamos ajustar algumas definições. Ao estudamos a arquitetura MVC, aprendemos que os *controllers* formam a "camada do meio", passando parâmetros das *views* para os *models* e retornando informações dos *models* para as *views*. Em aplicações web isso é traduzido como: a função do *controller* é retornar respostas (preferivelmente uma resposta HTTP) baseado em requisições (preferivelmente uma requisição HTTP).
 
 
-## 5.2 Criando um controller
+## 5.2. Criando um controller
 
 No nosso caso, quando definimos a ação da rota `/produtos`, nós já realizamos o trabalho  de um *controller* (ou parte do trabalho). Para organizar corretamente a aplicação, vamos criar o controller `TutorialMvc\Controller\ProductController` em **app/src/Controller/ProductController.php**. O ([Exemplo 5.1](#ex5dot1)) apresenta o código e a estrutura de pastas.
 
@@ -541,3 +542,268 @@ class ProductController
 <center><sup>Exemplo 5.2. Criando um controller</sup></center>
 
 Os métodos de um *controller* que são utilizados no *router* recebem o nome de *actions*.
+
+## 5.3. Injeção de dependências
+
+A classe `ProductController` não possui até agora nenhuma dependência, no entanto, é responsável por retornar os produtos existentes. A lista de produtos poderia vir de uma consulta banco de dados ou de uma requisição em um servidor de API<sup>[19](#apis)</sup>, vamos supor que a classe `TutorialMvc\Model\ProductEntiy` seja responsável por buscar os produtos do banco de dados. A ([Figura 5.3.1](#fig5dot3dot1)) mostra três possíveis formas de satisfazer essa dependência.
+
+
+<sup id="#fig5dot3dot1"></sup>
+```php
+<?php
+// app/src/Controller/ProductController.php
+
+namespace TutorialMvc\Controller;
+
+use TutorialMvc\Model\ProductEntity;
+
+class ProductController
+{
+
+    private $prodEnt;
+
+    public function __construct(ProductEntity $pe)
+    {
+        $this->prodEnt = $pe;
+    }
+
+    public function fetch($request, $response)
+    {
+        $data = $this->prodEnt->fetch();
+        return $response->withJson($data);
+    }
+}
+```
+
+```php
+<?php
+// app/src/Controller/ProductController.php
+
+namespace TutorialMvc\Controller;
+
+use TutorialMvc\Model\ProductEntity;
+
+class ProductController
+{
+
+    private $prodEnt;
+
+    public function __construct()
+    {
+    }
+
+    public function fetch($request, $response)
+    {
+        $data = $this->prodEnt->fetch();
+        return $response->withJson($data);
+    }
+
+    public function setProdEnt(ProductEntity $pe)
+    {
+        $this->prodEnt = $pe;
+    }
+
+}
+```
+
+```php
+<?php
+// app/src/Controller/ProductController.php
+
+namespace TutorialMvc\Controller;
+
+use TutorialMvc\Model\ProductEntity;
+
+class ProductController
+{
+
+    public function __construct()
+    {
+    }
+
+    public function fetch($request, $response)
+    {
+        // resolving ProductEntity dependency
+        // ...
+        // ProductEntity instance
+        $prodEnt = new ProductEntity($dependency);
+
+        $data = $prodEnt->fetch();
+        return $response->withJson($data);
+    }
+}
+```
+
+<center><sup>Figura 5.3.1. Exemplos de definição de dependências</sup></center>
+
+No primeiro caso, a dependência é fornecida pelo **construtor**, no segundo via método **set** e na terceira é criada internamente no método **fetch**. A definição via método set de dependências obrigatórias não é aconselhada, devido a possibilidade de esquecimento, do desenvolvedor, de definir a dependência antes de chamar o método fetch. A definição de dependências dentro do método também não é aconselhada, pois aumenta a responsabilidade de método (além de buscar os produtos ele também deve saber como criar o manipulador de produtos) e dificulta a criação de testes para `ProductController`. Assim, a primeira forma de injeção de dependências é a mais aconselhada. Antes de continuar aconselha-se a leitura da [PSR-11](https://www.php-fig.org/psr/psr-11/), [IoC](https://pt.wikipedia.org/wiki/Invers%C3%A3o_de_controle) e [DI](http://best-practice-software-engineering.ifs.tuwien.ac.at/patterns/dependency_injection.html).
+
+## 5.4 Usando *Containers*
+
+O Slim possui suporte a utilização de *containers* por meio do **Pimple** <sup>[20](#pimple)</sup>. O ([Exemplo 5.4.1](#ex5dot4dot1)) mostra a utilização de containers para satisfazer as dependências de `ProductController` e `ProductEntity`. Observação: lembre-se de criar o banco de dados e inserir as credenciais corretas.
+
+<sup id="#ex5dot4dot1"></sup>
+```sh
+app/
+    config/
+        config.local.php # crie este arquivo
+        config.php # crie este arquivo
+    public/
+        index.php
+    src/
+        Model/
+            ProductEntity.php # crie este arquivo
+        Controller/
+            ProductController.php
+        routes.php
+        dependencies.php # crie este arquivo
+    composer.json
+    composer.lock
+```
+```php
+<?php
+// app/config/config.local.php
+
+return [
+    'database' => [
+        'host' => 'localhost',
+        'port' => 3306,
+        'db_name' => 'tutorial_mvc',
+        'db_user' => 'root',
+        'db_pass' => 'root',
+    ],
+];
+```
+```php
+<?php
+// app/config/config.php
+
+$config = [
+    'database' => [
+        'driver' => 'pdo_mysql',
+        'charset' => 'utf8',
+    ],
+];
+
+return array_merge_recursive(
+    $config,
+    require_once __DIR__ . '/config.local.php'
+);
+```
+```php
+<?php
+// app/src/Model/ProductEntity.php
+
+namespace TutorialMvc\Model;
+
+use PDO;
+
+class ProductEntity
+{
+    private $conn;
+
+    public function __construct(PDO $conn)
+    {
+        $this->conn = $conn;
+    }
+
+    public function fetch()
+    {
+        $data = [
+            ['id' =>1, 'name' => 'batom'],
+            ['id' =>2, 'name' => 'perfume'],
+            ['id' =>3, 'name' => 'bolacha'],
+            ['id' =>4, 'name' => 'Tomate'],
+            ['id' =>5, 'name' => 'Felicidade'],
+            ['id' =>6, 'name' => 'Conhecimento']
+        ];
+
+        return $data;
+    }
+}
+```
+```php
+<?php
+// app/src/Controller/ProductController.php
+
+namespace TutorialMvc\Controller;
+
+use TutorialMvc\Model\ProductEntity;
+
+class ProductController
+{
+    private $prodEnt;
+
+    public function __construct(ProductEntity $pe)
+    {
+        $this->prodEnt = $pe;
+    }
+
+    public function fetch($request, $response)
+    {
+        $data = $this->prodEnt->fetch();
+        return $response->withJson($data);
+    }
+}
+```
+```php
+<?php
+// app/src/dependencies.php
+
+use TutorialMvc\Controller\ProductController;
+use TutorialMvc\Model\ProductEntity;
+
+$container = $router->getContainer();
+
+$config = require __DIR__ . '/../config/config.php';
+$container['config'] = $config;
+
+$container[PDO::class] = function($c) {
+    $config = $c->get('config')['database'];
+    return new PDO(
+        'mysql:host='.$config['host'].';dbname='.$config['db_name'].';charset=' . $config['charset'],
+        $config['db_user'],
+        $config['db_pass'],
+        [
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+            PDO::ATTR_PERSISTENT => false,
+            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
+        ]
+    );
+};
+
+$container[ProductEntity::class] = function($c) {
+    $pdo = $c->get(PDO::class);
+    return new ProductEntity($pdo);
+};
+
+$container[ProductController::class] = function($c) {
+    $pe = $c->get(ProductEntity::class);
+    return new ProductController($pe);
+};
+```
+```php
+<?php
+// app/public/index.php
+
+require '../vendor/autoload.php';
+
+$router = new Slim\App();
+
+require __DIR__ . '/../src/dependencies.php';
+require __DIR__ . '/../src/routes.php';
+
+$router->run();
+```
+
+<center><sup>Exemplo 5.4.1. Utilização do Pimple para satisfazer dependências da aplicação</sup></center>
+
+---
+
+<center>Notas de Rodapé</center>
+
+<b id="apis">19</b> *Web API*. [[saber mais](https://en.wikipedia.org/wiki/Web_API)]
+
+<b id="pimple">20</b> Documentação do Pimple. [[saber mais](https://pimple.symfony.com/)]
+
+---
