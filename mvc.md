@@ -1021,7 +1021,7 @@ class Product
     }
 }
 ```
-<center><sup>Exemplo 6.2.2. Métodos para consulta, alteração e remoção de produtos</sup></center>
+<center><sup>Exemplo 6.2.3. Métodos para consulta, alteração e remoção de produtos</sup></center>
 
 ---
 
@@ -1029,6 +1029,6 @@ class Product
 
 <b id="pdodoc">21</b> *PDO Doc*. [[saber mais](http://php.net/manual/pt_BR/book.pdo.php)]
 
-<b id="pdodoc">22</b> *Postman Doc*. [[saber mais](https://www.getpostman.com/docs/v6/)]
+<b id="postman">22</b> *Postman Doc*. [[saber mais](https://www.getpostman.com/docs/v6/)]
 
 ---
