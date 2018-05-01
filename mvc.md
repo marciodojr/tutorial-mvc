@@ -395,11 +395,11 @@ GET /produto/1
 A definição da url, a escolha do método http e a ação a ser executada é definida pelo desenvolvedor, mas aconselha-se defini-los em conformidade com o padrão REST<sup>[18](#restm)</sup>.
 
 
-## 4.3 O Router é um Model, um Controller ou uma View?
+## 4.3. O Router é um Model, um Controller ou uma View?
 
 O *router* não é parte do MVC e, portanto, não deve estar em nossa aplicação. Ele deve ser tratado com uma dependência externa, só é recomendada a construção de um, se sua aplicação possuir uma necessidade muito específica ou para fins didádicos (fora do escopo desse tutorial). Antes de realizar a instalação de um aconselha-se fortemente a leitura da [PSR-7](https://www.php-fig.org/psr/psr-7/).
 
-## 4.4 Instalando o Router
+## 4.4. Instalando o Router
 
 Utilizaremos o composer para instalar um router. O ([Exemplo 4.1](#ex4dot1)) apresenta o processo de instalação.
 
@@ -422,7 +422,7 @@ Generating autoload files
 ```
 <center><sup>Exemplo 4.1. Instalação do Slim</sup></center>
 
-## 4.5 Usando
+## 4.5. Usando
 
 Vamos criar uma rota simples para demonstrar o funcionamento do router. Primeiro, crie um arquivo chamado **routes.php** com a declaração de uma rota em **app/src/** depois, inclua-o no arquivo index.php. Por fim, execute o comando para rodar o servidor embutido do php e digite a url no navegador [localhost:4200/produtos](http://localhost:4200/produtos). O ([Exemplo 4.2](#ex4dot2)) apresenta o conteúdo adicionado em cada arquivo.
 
@@ -482,9 +482,9 @@ Observação: Note que, como estamos utilizando o *autoload* do Composer, ao ins
 
 # 5. Controllers e Containers
 
-## 5.1 Introdução
+## 5.1. Introdução
 
-Finalmente estamos prontos para criar a primeira camada da aplicação MV**C**, mas antes vamos ajustar algumas definições. Ao estudamos a arquitetura MVC, aprendemos que os *controllers* formam a "camada do meio", passando parâmetros das *views* para os *models* e retornando informações dos *models* para as *views*. Em aplicações web isso é traduzido como: a função do *controller* é retornar respostas (preferivelmente uma resposta HTTP) baseado em requisições (preferivelmente uma requisição HTTP).
+Finalmente estamos prontos para criar a primeira camada da aplicação MV**C**, mas antes vamos ajustar algumas definições. Ao estudarmos a arquitetura MVC, aprendemos que os *controllers* formam a "camada do meio", passando parâmetros das *views* para os *models* e retornando informações dos *models* para as *views*. Em aplicações web isso é traduzido como: a função do *controller* é retornar respostas (preferivelmente uma resposta HTTP) baseado em requisições (preferivelmente uma requisição HTTP).
 
 
 ## 5.2. Criando um controller
@@ -539,16 +539,16 @@ class ProductController
     }
 }
 ```
-<center><sup>Exemplo 5.2. Criando um controller</sup></center>
+<center><sup>Exemplo 5.1. Criando um controller</sup></center>
 
 Os métodos de um *controller* que são utilizados no *router* recebem o nome de *actions*.
 
 ## 5.3. Injeção de dependências
 
-A classe `ProductController` não possui até agora nenhuma dependência, no entanto, é responsável por retornar os produtos existentes. A lista de produtos poderia vir de uma consulta banco de dados ou de uma requisição em um servidor de API<sup>[19](#apis)</sup>, vamos supor que a classe `TutorialMvc\Model\ProductEntiy` seja responsável por buscar os produtos do banco de dados. A ([Figura 5.3.1](#fig5dot3dot1)) mostra três possíveis formas de satisfazer essa dependência.
+A classe `ProductController` não possui até agora nenhuma dependência, no entanto, é responsável por retornar os produtos existentes. A lista de produtos poderia vir de uma consulta banco de dados ou de uma requisição em um servidor de API<sup>[19](#apis)</sup>, vamos supor que a classe `TutorialMvc\Model\ProductEntity` seja responsável por buscar os produtos do banco de dados. A ([Figura 5.3.1](#fig5dot3dot1)) mostra três possíveis formas de satisfazer essa dependência.
 
 
-<sup id="#fig5dot3dot1"></sup>
+<sup id="fig5dot3dot1"></sup>
 ```php
 <?php
 // app/src/Controller/ProductController.php
@@ -642,7 +642,7 @@ No primeiro caso, a dependência é fornecida pelo **construtor**, no segundo vi
 
 O Slim possui suporte a utilização de *containers* por meio do **Pimple** <sup>[20](#pimple)</sup>. O ([Exemplo 5.4.1](#ex5dot4dot1)) mostra a utilização de containers para satisfazer as dependências de `ProductController` e `ProductEntity`. Observação: lembre-se de criar o banco de dados e inserir as credenciais corretas.
 
-<sup id="#ex5dot4dot1"></sup>
+<sup id="ex5dot4dot1"></sup>
 ```sh
 app/
     config/
