@@ -865,12 +865,170 @@ class Product
 
 ## 6.2. Mais do que listar
 
+Com exceção da *view*, conseguimos concluir o caminho completo de uma funcionalidade da aplicação. Vamos ampliar as funcionalidades para que seja possível criar, remover, atualizar e visualizar um produto específico. O primeiro passo é criar novas rotas. O ([Exemplo 6.2.1](#ex6dot2dot1)) exibe as modificações necessárias. Note que nossas rotas seguem o padrão REST. Observações: recomenda-se o uso do Postman<sup>[22](#postman)</sup> para excução dos exemplos e, ao testar a rota de atualização de produtos, deve-se marcar a opção `x-www-form-urlencoded`.
 
+<sup id="ex6dot2dot1"></sup>
+ ```php
+ <?php
+// app/src/routes.php
+
+$router->group('/produtos', function(){
+    // GET /produtos: retorna uma lista de produtos no formato json
+    $this->get('', 'TutorialMvc\Controller\ProductController:fetch');
+    // GET /produtos/{id}: retorna o produto cujo id é "id"
+    $this->get('/{id}', 'TutorialMvc\Controller\ProductController:find');
+    // POST /produtos: cria um novo produto
+    $this->post('', 'TutorialMvc\Controller\ProductController:create');
+    // PUT /produtos/{id}: atualiza o produto cujo id é "id"
+    $this->put('/{id}', 'TutorialMvc\Controller\ProductController:update');
+    // DELETE /produtos/{id}: remove o produto cujo id é "id"
+    $this->delete('/{id}', 'TutorialMvc\Controller\ProductController:delete');    
+});
+ ```
+<center><sup>Exemplo 6.2.1. Rotas para o CRUD de produtos</sup></center>
+
+O segundo passo é adicionar novas ações em `TutorialMvc\Controller\ProductController`, o ([Exemplo 6.2.2](#ex6dot2dot2)) mostra as modificações. Neste ponto podemos ver que, como a dependência é fornecida via construtor ao invés de instanciada internamente, nossas ações possuem poucas linhas de código e são de fácil entendimento.
+
+<sup id="ex6dot2dot2"></sup>
+```php
+<?php
+// app/src/Controller/ProductController.php
+
+namespace TutorialMvc\Controller;
+
+use TutorialMvc\Model\Product;
+
+class ProductController
+{
+    private $prod;
+
+    public function __construct(Product $p)
+    {
+        $this->prod = $p;
+    }
+
+    public function fetch($request, $response)
+    {
+        $data = $this->prod->fetch();
+        return $response->withJson($data);
+    }
+
+    public function create($request, $response)
+    {
+        $name = $request->getParam('name');
+        $product = $this->prod->create($name);
+        return $response->withJson($product);
+    }
+
+    public function find($request, $response, $args)
+    {
+        $product = $this->prod->find($args['id']);
+        return $response->withJson($product);
+    }
+
+    public function update($request, $response, $args)
+    {
+        $name = $request->getParam('name');
+        $product = $this->prod->update($args['id'], $name);
+        return $response->withJson($product);
+    }
+
+    public function delete($request, $response, $args)
+    {
+        $product = $this->prod->delete($args['id']);
+        return $response->withJson($product);
+    }
+}
+```
+<center><sup>Exemplo 6.2.2. Novas ações no controller</sup></center>
+
+Finalmente, no *model* `Product` construímos os métodos necessários para executar as operações no banco de dados. O ([Exemplo 6.2.3](#ex6dot2dot3)) apresenta as modificações finais.
+
+<sup id="ex6dot2dot3"></sup>
+```php
+<?php
+// app/src/Model/Product.php
+
+namespace TutorialMvc\Model;
+
+use PDO;
+
+class Product
+{
+    private $conn;
+
+    public function __construct(PDO $conn)
+    {
+        $this->conn = $conn;
+    }
+
+    public function fetch()
+    {
+        $stm = $this->conn->query('select * from products');
+
+        if($stm) {
+            return $stm->fetchAll();
+        }
+
+        return [];
+    }
+
+    public function find($id)
+    {
+        $stm = $this->conn->prepare('select * from products where id=?');
+        if($stm->execute([$id])) {
+            $product = $stm->fetch();
+            if($product) {
+                return $product;
+            }
+        }
+
+        return [];
+    }
+
+    public function create($name)
+    {
+        $stm = $this->conn->prepare('insert into products(name) value(?)');
+        if($stm->execute([$name])) {
+            return $this->find($this->conn->lastInsertId());
+        }
+
+        return [];
+    }
+
+    public function update($id, $name)
+    {
+        $stm = $this->conn->prepare('update products set name=? where id=?');
+        if($stm->execute([$name, $id])) {
+            return $this->find($id);
+        }
+
+        return [];
+    }
+
+    public function delete($id)
+    {
+        $product = $this->find($id);
+
+        if($product) {
+            $stm = $this->conn->prepare('delete from products where id=?');
+            if($stm->execute([$id])) {
+                return $product;
+            }
+        }
+
+        return [];
+    }
+}
+```
+<center><sup>Exemplo 6.2.2. Métodos para consulta, alteração e remoção de produtos</sup></center>
 
 ---
 
 <center>Notas de Rodapé</center>
 
 <b id="pdodoc">21</b> *PDO Doc*. [[saber mais](http://php.net/manual/pt_BR/book.pdo.php)]
+
+<b id="pdodoc">22</b> *Postman Doc*. [[saber mais](https://www.getpostman.com/docs/v6/)]
 
 ---
