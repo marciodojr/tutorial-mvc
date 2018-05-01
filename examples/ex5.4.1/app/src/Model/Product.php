@@ -1,11 +1,11 @@
 <?php
-// app/src/Model/ProductEntity.php
+// app/src/Model/Product.php
 
 namespace TutorialMvc\Model;
 
 use PDO;
 
-class ProductEntity
+class Product
 {
     private $conn;
 

@@ -192,17 +192,17 @@ Antes de iniciar a construção dos códigos é recomendada a leitura das [PSR-1
 Era bastante comum (e, infelizmente, ainda é) utilizar diretamente os construtores de linguagem `require`, `require_once`,  `include` e `include_once`. Apesar de ser possível incluir arquivos de classes dessa forma, o php possui formas mais adequadas de incluir as dependências de classes. Em 2004 (versão 5.0), foi introduzida a função mágica<sup>[11](#phpmagic)</sup> `__autoload`<sup>[12](#fautoload)</sup>, esta função, quando declarada, é chamada automaticamente sempre que uma classe ainda não incluída é usada. Em 2005 (versão 5.1), foi introduzida uma família de funções `spl_autoload*`<sup>[13](#fsplautoload)</sup> para substutir a função `__autoload`, permitindo o registro de múltiplas funções de inclusão de classes e, consequentemente, facilitando a utilização de bibliotecas de terceiros (a partir do uso de funções de inclusão de classe de terceiros). 
 Para evitar conflitos de classes com mesmo nome, em 2009 (versão 5.3), o php adicionou o recurso de namespace<sup>[14](#namespaces)</sup>. Com o surgimento do Composer em 2012 e a formalização das propostas de *autoload*, padronizou-se o modelo de carregamentos de classes conforme PSR-4<sup>[15](#psr4)</sup>.
 
-A ([Figura 3.1](#fig3dot1)) apresenta a maneira padrão de definição de dependências da classe. Note que a classe  `ProductEntity` possui um namespace declarado no início do arquivo (`TutorialMvc\Model`) e a classe `ProductController` também (`TutorialMvc\Controller`), esta ainda define como será o uso de `ProductEntity` por meio do operador `use`<sup>[16](#useop)</sup>.
+A ([Figura 3.1](#fig3dot1)) apresenta a maneira padrão de definição de dependências da classe. Note que a classe  `Product` possui um namespace declarado no início do arquivo (`TutorialMvc\Model`) e a classe `ProductController` também (`TutorialMvc\Controller`), esta ainda define como será o uso de `Product` por meio do operador `use`<sup>[16](#useop)</sup>.
 
 
 <sup id="fig3dot1"></sup>
 ```php
 <?php
-// src/Model/ProductEntity.php
+// src/Model/Product.php
 
 namespace TutorialMvc\Model;
 
-class ProductEntity
+class Product
 {
 //..
 ```
@@ -213,16 +213,16 @@ class ProductEntity
 
 namespace TutorialMvc\Controller;
 
-use TutorialMvc\Model\ProductEntity;
+use TutorialMvc\Model\Product;
 
 class ProductController
 {
 
-    private $productEntity;
+    private $product;
 
-    public function __construct(ProductEntity $pe)
+    public function __construct(Product $p)
     {
-        $this->productEntity = $pe;
+        $this->product = $p;
     }
     // ...
 ```
@@ -545,7 +545,7 @@ Os métodos de um *controller* que são utilizados no *router* recebem o nome de
 
 ## 5.3. Injeção de dependências
 
-A classe `ProductController` não possui até agora nenhuma dependência, no entanto, é responsável por retornar os produtos existentes. A lista de produtos poderia vir de uma consulta banco de dados ou de uma requisição em um servidor de API<sup>[19](#apis)</sup>, vamos supor que a classe `TutorialMvc\Model\ProductEntity` seja responsável por buscar os produtos do banco de dados. A ([Figura 5.3.1](#fig5dot3dot1)) mostra três possíveis formas de satisfazer essa dependência.
+A classe `ProductController` não possui até agora nenhuma dependência, no entanto, é responsável por retornar os produtos existentes. A lista de produtos poderia vir de uma consulta banco de dados ou de uma requisição em um servidor de API<sup>[19](#apis)</sup>, vamos supor que a classe `TutorialMvc\Model\Product` seja responsável por buscar os produtos do banco de dados. A ([Figura 5.3.1](#fig5dot3dot1)) mostra três possíveis formas de satisfazer essa dependência.
 
 
 <sup id="fig5dot3dot1"></sup>
@@ -555,16 +555,16 @@ A classe `ProductController` não possui até agora nenhuma dependência, no ent
 
 namespace TutorialMvc\Controller;
 
-use TutorialMvc\Model\ProductEntity;
+use TutorialMvc\Model\Product;
 
 class ProductController
 {
 
     private $prodEnt;
 
-    public function __construct(ProductEntity $pe)
+    public function __construct(Product $p)
     {
-        $this->prodEnt = $pe;
+        $this->prodEnt = $p;
     }
 
     public function fetch($request, $response)
@@ -581,12 +581,12 @@ class ProductController
 
 namespace TutorialMvc\Controller;
 
-use TutorialMvc\Model\ProductEntity;
+use TutorialMvc\Model\Product;
 
 class ProductController
 {
 
-    private $prodEnt;
+    private $prod;
 
     public function __construct()
     {
@@ -594,13 +594,13 @@ class ProductController
 
     public function fetch($request, $response)
     {
-        $data = $this->prodEnt->fetch();
+        $data = $this->prod->fetch();
         return $response->withJson($data);
     }
 
-    public function setProdEnt(ProductEntity $pe)
+    public function setProd(Product $p)
     {
-        $this->prodEnt = $pe;
+        $this->prod = $p;
     }
 
 }
@@ -612,7 +612,7 @@ class ProductController
 
 namespace TutorialMvc\Controller;
 
-use TutorialMvc\Model\ProductEntity;
+use TutorialMvc\Model\Product;
 
 class ProductController
 {
@@ -623,10 +623,10 @@ class ProductController
 
     public function fetch($request, $response)
     {
-        // resolving ProductEntity dependency
+        // resolving Product dependency
         // ...
-        // ProductEntity instance
-        $prodEnt = new ProductEntity($dependency);
+        // Product instance
+        $prodEnt = new Product($dependency);
 
         $data = $prodEnt->fetch();
         return $response->withJson($data);
@@ -640,7 +640,7 @@ No primeiro caso, a dependência é fornecida pelo **construtor**, no segundo vi
 
 ## 5.4 Usando *Containers*
 
-O Slim possui suporte a utilização de *containers* por meio do **Pimple** <sup>[20](#pimple)</sup>. O ([Exemplo 5.4.1](#ex5dot4dot1)) mostra a utilização de containers para satisfazer as dependências de `ProductController` e `ProductEntity`. Observação: lembre-se de criar o banco de dados e inserir as credenciais corretas.
+O Slim possui suporte a utilização de *containers* por meio do **Pimple** <sup>[20](#pimple)</sup>. O ([Exemplo 5.4.1](#ex5dot4dot1)) mostra a utilização de containers para satisfazer as dependências de `ProductController` e `Product`. Observação: lembre-se de criar o banco de dados e inserir as credenciais corretas.
 
 <sup id="ex5dot4dot1"></sup>
 ```sh
@@ -652,7 +652,7 @@ app/
         index.php
     src/
         Model/
-            ProductEntity.php # crie este arquivo
+            Product.php # crie este arquivo
         Controller/
             ProductController.php
         routes.php
@@ -692,13 +692,13 @@ return array_merge_recursive(
 ```
 ```php
 <?php
-// app/src/Model/ProductEntity.php
+// app/src/Model/Product.php
 
 namespace TutorialMvc\Model;
 
 use PDO;
 
-class ProductEntity
+class Product
 {
     private $conn;
 
@@ -728,15 +728,15 @@ class ProductEntity
 
 namespace TutorialMvc\Controller;
 
-use TutorialMvc\Model\ProductEntity;
+use TutorialMvc\Model\Product;
 
 class ProductController
 {
-    private $prodEnt;
+    private $prod;
 
-    public function __construct(ProductEntity $pe)
+    public function __construct(Product $p)
     {
-        $this->prodEnt = $pe;
+        $this->prod = $p;
     }
 
     public function fetch($request, $response)
@@ -751,7 +751,7 @@ class ProductController
 // app/src/dependencies.php
 
 use TutorialMvc\Controller\ProductController;
-use TutorialMvc\Model\ProductEntity;
+use TutorialMvc\Model\Product;
 
 $container = $router->getContainer();
 
@@ -772,14 +772,14 @@ $container[PDO::class] = function($c) {
     );
 };
 
-$container[ProductEntity::class] = function($c) {
+$container[Product::class] = function($c) {
     $pdo = $c->get(PDO::class);
-    return new ProductEntity($pdo);
+    return new Product($pdo);
 };
 
 $container[ProductController::class] = function($c) {
-    $pe = $c->get(ProductEntity::class);
-    return new ProductController($pe);
+    $p = $c->get(Product::class);
+    return new ProductController($p);
 };
 ```
 ```php
@@ -805,5 +805,72 @@ $router->run();
 <b id="apis">19</b> *Web API*. [[saber mais](https://en.wikipedia.org/wiki/Web_API)]
 
 <b id="pimple">20</b> Documentação do Pimple. [[saber mais](https://pimple.symfony.com/)]
+
+---
+
+# 6. Model
+
+# 6.1. Um modelo de verdade
+
+No capítulo anterior concluímos a construção de uma ação de um *controller* e tivemos de criar um falso *model* para fazer a injeção de dependência. Vamos agora construir a consulta com o banco de dados, antes de iniciar, é aconselhada a leitura da documentação do PDO<sup>[21](#pdodoc)</sup>. O ([Exemplo 6.1.1](#ex6dot1dot1)) apresenta o código de criação da tabela de produtos, código para popular a tabela e modificações necessárias no *model*.
+
+<sup id="ex6dot1dot1"></sup>
+```sql
+create table products(
+    id int auto_increment primary key,
+    name varchar(50) not null,
+    created_at datetime default CURRENT_TIMESTAMP,
+    updated_at datetime default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP
+);
+
+insert into products(name) values 
+('batom'),
+('perfume'),
+('bolacha'),
+('Tomate'),
+('Felicidade'),
+('Conhecimento');
+```
+
+```php
+<?php
+// app/src/Model/Product.php
+
+namespace TutorialMvc\Model;
+
+use PDO;
+
+class Product
+{
+    private $conn;
+
+    public function __construct(PDO $conn)
+    {
+        $this->conn = $conn;
+    }
+
+    public function fetch()
+    {
+        $stm = $this->conn->query('select * from products');
+
+        if($stm) {
+            return $stm->fetchAll();
+        }
+
+        return [];
+    }
+}
+```
+<center><sup>Exemplo 6.1.1. Comunicação com o banco de dados utilizando o PDO</sup></center>
+
+## 6.2. Mais do que listar
+
+
+
+---
+
+<center>Notas de Rodapé</center>
+
+<b id="pdodoc">21</b> *PDO Doc*. [[saber mais](http://php.net/manual/pt_BR/book.pdo.php)]
 
 ---

@@ -29,6 +29,6 @@ $container[Product::class] = function($c) {
 };
 
 $container[ProductController::class] = function($c) {
-    $p = $c->get(Product::class);
-    return new ProductController($p);
+    $pe = $c->get(Product::class);
+    return new ProductController($pe);
 };
