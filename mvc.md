@@ -397,7 +397,7 @@ A definição da url, a escolha do método http e a ação a ser executada é de
 
 ## 4.3. O Router é um Model, um Controller ou uma View?
 
-O *router* não é parte do MVC e, portanto, não deve estar em nossa aplicação. Ele deve ser tratado com uma dependência externa, só é recomendada a construção de um, se sua aplicação possuir uma necessidade muito específica ou para fins didádicos (fora do escopo desse tutorial). Antes de realizar a instalação de um aconselha-se fortemente a leitura da [PSR-7](https://www.php-fig.org/psr/psr-7/).
+O *router* não é parte do MVC e, portanto, não deve estar em nossa aplicação. Ele deve ser tratado com uma dependência externa, só é recomendada a construção de um, se sua aplicação possuir uma necessidade muito específica, se seu projeto for um router ou para fins didádicos (fora do escopo desse tutorial). Antes de realizar a instalação de um aconselha-se fortemente a leitura da [PSR-7](https://www.php-fig.org/psr/psr-7/).
 
 ## 4.4. Instalando o Router
 
