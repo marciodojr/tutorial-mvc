@@ -1032,3 +1032,383 @@ class Product
 <b id="postman">22</b> *Postman Doc*. [[saber mais](https://www.getpostman.com/docs/v6/)]
 
 ---
+<<<<<<< HEAD
+=======
+
+# 7. View
+
+## 7.1. Introdução
+
+Chegamos finalmente à ultima camada. Até aqui, nossa aplicação apenas exibe `json`. Um servidor de API deve executar isso (e mais algumas operações, por exemplo, autenticação e validação, mas deve evitar ter uma interface específica). Em aplicações robustas o desenvolvimento é dividido em duas partes: A construção do servidor de API e a construção das aplicações de *frontend*. Uma aplicação de frontend pode ser de qualquer tipo: um aplicativo nativo para android, uma aplicação web que roda no navegador, um programa instalado no computador etc. Quando mais genérico é o retorno do servidor de API (retorno em `json` é um bom formato), mais fácil é criar multiplas aplicações de frontend.
+
+## 7.2. Considerações Iniciais
+
+Apesar de indicada a construção de um projeto específico para o *frontend*, inicialmente, criaremos nossa view dentro do mesmo projeto. Ao término da view faremos a separação. Esta abordagem será executada por motivos didáticos.
+
+## 7.3. Construindo a estrutura HTML
+
+Nossa *view* consistirá de um um arquivo html, um arquivo css e um arquivo js. A ([Figura 7.3.1](#fig7dot3dot1)) mostra a estrutura de pastas.
+
+<sup id="fig7dot3dot1"></sup>
+```sh
+app/
+    config/
+        config.local.php
+        config.php
+    public/
+        index.php
+        js/
+            app.js # crie este arquivo
+        css/
+            app.css # crie este arquivo
+        app.html # crie este arquivo
+    src/
+        Model/
+            Product.php
+        Controller/
+            ProductController.php
+        routes.php
+        dependencies.php
+    composer.json
+    composer.lock
+```
+<center><sup>Figura 7.3.1. Arquivos de frontend</sup></center>
+
+O arquivo **index.html** contém todos os elementos necessários para exibir, remover e editar produtos. A comunicação com o servidor de api será feita por meio de requisições ajax. O ([Exemplo 7.3.1](#ex7dot3dot1)) apresenta o arquivo html.
+
+<sup id="ex7dot3dot1"></sup>
+```html
+<!DOCTYPE html>
+<html lang="pt-br">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <title>App Produtos</title>
+        <!-- For Vue -->
+        <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+        <!-- For ajax requests -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/vue-resource/1.5.0/vue-resource.js"></script>
+        <link rel="stylesheet" href="/css/app.css">
+        <link href="https://fonts.googleapis.com/css?family=Titillium+Web" rel="stylesheet">
+    </head>
+    <body>
+        <div id="productApp">
+            <main>
+                <div class="container">
+                    <label><b>Novo Produto</b></label><br>
+                    <input type="text" name="product" placeholder="Ex: Banana" v-model="productToCreate.name">
+                    <button v-on:click="createProduct">Cadastrar</button>
+                </div>
+                <div class="container update-container" v-if="showUpdateContainer">
+                    <label><b>Editar Produto #{{productToUpdate.id}}</b></label><br>
+                    <input type="text" name="product" placeholder="Ex: Trigo" v-model="productToUpdate.name">
+                    <button v-on:click="updateProduct">Atualizar</button>
+                </div>
+                <div class="container info-container" v-if="showInfoContainer">
+                    <label><b>Mais informações</b></label>
+                    <ul>
+                        <li>#: {{productToSee.id}}</li>
+                        <li>Produto: {{productToSee.name}}</li>
+                        <li>Criado em: {{productToSee.created_at}}</li>
+                        <li>Última atualização: {{productToSee.updated_at}}</li>
+                    </ul>
+                    <button v-on:click="closeInfo">Fechar</button>
+                </div>
+                <table class="product-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Produto</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="(p, index) in products">
+                            <td>{{p.id}}</td>
+                            <td>{{p.name}}</td>
+                            <td>
+                                <ul>
+                                    <li><a href="#" v-on:click="findProduct(p.id)">Mais informações</a></li>
+                                    <li><a href="#" v-on:click="showEdit(index)">Editar</a></li>
+                                    <li><a href="#" v-on:click="deleteProduct(index)">Remover</a></li>
+                                </ul>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </main>
+        </div>
+        <script src="/js/app.js"></script>
+    </body>
+</html>
+```
+<center><sup>Exemplo 7.3.1. Estrutura html da aplicação</sup></center>
+
+Estamos utilizando três dependências externas: (1) Vue.js<sup>[23](#vuejs)</sup> utilizado para facilitar a manipulação das informações de produtos na estrutura html; (2) Vue Resource<sup>[24](#vueresource)</sup>  utilizado para realização de requisições ao servidor de API (get, post, put e delete); (3) Uma fonte do google para deixar os textos mais agradáveis. O elemento `#productApp` é considerado raíz da aplicação e pode ser divido em quatro partes importantes. Na primeira, ([Figura 7.3.2](#fig7dot3dot2)), é feita a associação da variável do javascript que armazena o nome do produto a ser cadastrado. Na segunda, ([Figura 7.3.3](#fig7dot3dot3)), é feita a associação da variável que contém o nome do produto a ser editado. Na terceira, ([Figura 7.3.4](#fig7dot3dot4)), são associadas as variáveis que armazenam as informações do produto a ser exibido. Na última parte, ([Figura 7.3.5](#fig7dot3dot5)), a lista de produtos é processada e exibida em uma tabela.
+
+<sup id="fig7dot3dot2"></sup>
+```html
+<div class="container">
+    <label><b>Novo Produto</b></label><br>
+    <input type="text" name="product" placeholder="Ex: Banana" v-model="productToCreate.name">
+    <button v-on:click="createProduct">Cadastrar</button>
+</div>
+```
+<center><sup>Figura 7.3.2. Estrutura para criação de novos produtos</sup></center>
+
+<sup id="fig7dot3dot3"></sup>
+```html
+<div class="container update-container" v-if="showUpdateContainer">
+    <label><b>Editar Produto #{{productToUpdate.id}}</b></label><br>
+    <input type="text" name="product" placeholder="Ex: Trigo" v-model="productToUpdate.name">
+    <button v-on:click="updateProduct">Atualizar</button>
+</div>
+```
+<center><sup>Figura 7.3.3. Estrutura para edição de produtos</sup></center>
+
+<sup id="fig7dot3dot4"></sup>
+```html
+<div class="container info-container" v-if="showInfoContainer">
+    <label><b>Mais informações</b></label>
+    <ul>
+        <li>#: {{productToSee.id}}</li>
+        <li>Produto: {{productToSee.name}}</li>
+        <li>Criado em: {{productToSee.created_at}}</li>
+        <li>Última atualização: {{productToSee.updated_at}}</li>
+    </ul>
+    <button v-on:click="closeInfo">Fechar</button>
+</div>
+```
+<center><sup>Figura 7.3.4. Estrutura para exibição de informações de produtos</sup></center>
+
+<sup id="fig7dot3dot5"></sup>
+```html
+<table class="product-table">
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>Produto</th>
+            <th>Ações</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr v-for="(p, index) in products">
+            <td>{{p.id}}</td>
+            <td>{{p.name}}</td>
+            <td>
+                <ul>
+                    <li><a href="#" v-on:click="findProduct(p.id)">Mais informações</a></li>
+                    <li><a href="#" v-on:click="showEdit(index)">Editar</a></li>
+                    <li><a href="#" v-on:click="deleteProduct(index)">Remover</a></li>
+                </ul>
+            </td>
+        </tr>
+    </tbody>
+</table>
+```
+<center><sup>Figura 7.3.5. Estrutura para exibição de produtos</sup></center>
+
+## 7.4. Construindo o javascript
+
+No arquivo html aparecem algumas variáveis entre `{{}}` e funções `v-on:click`. Essas variáveis e funções estão definidas no arquivo app.js. O ([Exemplo 7.4.1](#ex7dot4dot1)) apresenta o conteúdo desse arquivo.
+
+<sup id="ex7dot4dot1"></sup>
+```js
+
+var app = new Vue({  
+    el: '#productApp',
+    data: {
+        products: [],
+        productToUpdate: {
+            id: null,
+            index: null,
+            name: null
+        },
+        productToCreate: {
+            name: null
+        },
+        productToSee: {
+            id: null,
+            name: null,
+            created_at: null,
+            updated_at: null
+        },
+        showUpdateContainer: false,
+        showInfoContainer: false
+    },
+    methods: {
+        createProduct: function() {
+            if(!this.productToCreate.name) {
+                return;
+            }
+            this.$http.post('/produtos', this.productToCreate, {responseType: 'json'}).then(function(response){
+                var data = response.body;
+                app.products.push({
+                    id: data.id,
+                    name: data.name
+                });
+                app.productToCreate.name = null;
+            });
+        },
+        deleteProduct: function(index) {
+            var id = this.products[index].id;
+            this.$http.delete('/produtos/' + id, {responseType: 'json'}).then(function(response){
+                app.products.splice(index, 1);
+            });
+        },
+        findProduct: function(id) {
+            this.showUpdateContainer = false;
+            this.$http.get('/produtos/' + id, {responseType: 'json'}).then(function(response){
+                app.productToSee = response.body;
+                app.showInfoContainer = true;
+            });
+        },
+        updateProduct: function() {
+            this.$http.put('/produtos/' + this.productToUpdate.id, {name: this.productToUpdate.name}, {responseType: 'json'}).then(function(response){
+                var data = response.body;
+                app.$set(app.products, app.productToUpdate.index, {
+                    id: data.id,
+                    name: data.name
+                });
+                app.productToUpdate = {
+                    index: null,
+                    id: null,
+                    name: null
+                };
+                app.showUpdateContainer = false;
+            });
+        },
+        showEdit: function(index) {
+            this.productToUpdate.index = index;
+            this.productToUpdate.id = this.products[index].id;
+            this.productToUpdate.name = this.products[index].name;
+            this.showUpdateContainer = true;
+            this.showInfoContainer = false;
+        },
+        closeInfo: function() {
+            this.showInfoContainer = false;
+        }
+    },
+    // Vue Lifecycle hook
+    created: function() {
+        this.$http.get('/produtos', {responseType: 'json'}).then(function(response){
+            app.products = response.body.map(function(p){
+                return {
+                    id: p.id,
+                    name: p.name
+                };
+            });
+        });
+    }
+});
+```
+<center><sup>Exemplo 7.4.1. Conteúdo de app.js</sup></center>
+
+# 7.5. Um pouco de estilo
+
+O ([Exemplo 7.5.1](#ex7dot5dot1)) apresenta um possível estilo para a aplicação.
+
+<sup id="ex7dot5dot1"></sup>
+```css
+html, body {
+    min-height: 100%;
+    margin: 0;
+    padding: 0;
+    font-family: 'Titillium Web', sans-serif;
+    color: #212121;
+}
+
+input {
+    height: 45px;
+    font-size: 15px;
+    line-height: 15px;
+    padding: 5px;
+    box-sizing: border-box;
+    border: none;
+}
+
+button {
+    height: 45px;
+    padding: 5px;
+    line-height: 15px;
+    font-size: 15px;
+    background: #424242;
+    border: none;
+    color: white;
+    cursor: pointer;
+    font-weight: bold;
+    transition: 0.1s;
+    min-width: 140px;
+}
+
+button:hover {
+    background-color: #ccc;
+    color: #424242;
+    transition: 0.1s;
+}
+
+.container {
+    padding: 50px;
+    color: white;
+    background: #009688;
+}
+
+.update-container, .info-container {
+    padding: 25px;
+    position: fixed;
+    top: 0;
+    right: 20px;
+    z-index: 2;
+    border: thin solid white;
+    margin: 20px auto;
+}
+
+.product-table {
+    width: 80%;
+    margin: 20px auto;
+    border-collapse: collapse;
+}
+
+.product-table thead {
+    font-weight: bold;
+}
+
+.product-table th {
+    border: 1px solid #ccc;
+    background-color: #009688;
+    padding: 10px 5px;
+    color: white;
+}
+
+.product-table td {
+    border: 1px solid #ccc;
+    padding: 2px 5px;
+}
+
+.product-table tbody td:nth-child(3) {
+    text-align: center;
+}
+
+.product-table td ul {
+    list-style: none;
+    margin: 0;
+}
+
+.product-table td ul li {
+    display: inline;
+    margin-right: 20px;
+}
+
+```
+<center><sup>Exemplo 7.5.1. Estilização da aplicação</sup></center>
+
+---
+<center>Notas de Rodapé</center>
+
+<b id="vuejs">23</b> *Software Development Kit*. [[saber mais](https://vuejs.org/v2/guide/)]
+
+<b id="vueresource">24</b> *Vue Resource Doc*. [[saber mais](https://github.com/pagekit/vue-resource/blob/develop/docs/http.md)]
+
+---
+>>>>>>> Capítulo sobre View

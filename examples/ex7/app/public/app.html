@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>App Produtos</title>
+    <!-- For Vue -->
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+    <!-- For ajax requests -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue-resource/1.5.0/vue-resource.js"></script>
+    <link rel="stylesheet" href="/css/app.css">
+    <link href="https://fonts.googleapis.com/css?family=Titillium+Web" rel="stylesheet">
+</head>
+<body>
+    <div id="productApp">
+        <main>
+            <div class="container">
+                <label><b>Novo Produto</b></label><br>
+                <input type="text" name="product" placeholder="Ex: Banana" v-model="productToCreate.name">
+                <button v-on:click="createProduct">Cadastrar</button>
+            </div>
+            <div class="container update-container" v-if="showUpdateContainer">
+                <label><b>Editar Produto #{{productToUpdate.id}}</b></label><br>
+                <input type="text" name="product" placeholder="Ex: Trigo" v-model="productToUpdate.name">
+                <button v-on:click="updateProduct">Atualizar</button>
+            </div>
+            <div class="container info-container" v-if="showInfoContainer">
+                <label><b>Mais informações</b></label>
+                <ul>
+                    <li>#: {{productToSee.id}}</li>
+                    <li>Produto: {{productToSee.name}}</li>
+                    <li>Criado em: {{productToSee.created_at}}</li>
+                    <li>Última atualização: {{productToSee.updated_at}}</li>
+                </ul>
+                <button v-on:click="closeInfo">Fechar</button>
+            </div>
+            <table class="product-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Produto</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="(p, index) in products">
+                        <td>{{p.id}}</td>
+                        <td>{{p.name}}</td>
+                        <td>
+                            <ul>
+                                <li><a href="#" v-on:click="findProduct(p.id)">Mais informações</a></li>
+                                <li><a href="#" v-on:click="showEdit(index)">Editar</a></li>
+                                <li><a href="#" v-on:click="deleteProduct(index)">Remover</a></li>
+                            </ul>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </main>
+    </div>
+    <script src="/js/app.js"></script>
+</body>
+</html>
