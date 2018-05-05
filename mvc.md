@@ -1032,8 +1032,6 @@ class Product
 <b id="postman">22</b> *Postman Doc*. [[saber mais](https://www.getpostman.com/docs/v6/)]
 
 ---
-<<<<<<< HEAD
-=======
 
 # 7. View
 
@@ -1411,4 +1409,3 @@ button:hover {
 <b id="vueresource">24</b> *Vue Resource Doc*. [[saber mais](https://github.com/pagekit/vue-resource/blob/develop/docs/http.md)]
 
 ---
->>>>>>> Capítulo sobre View
