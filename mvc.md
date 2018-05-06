@@ -638,7 +638,7 @@ class ProductController
 
 No primeiro caso, a dependência é fornecida pelo **construtor**, no segundo via método **set** e na terceira é criada internamente no método **fetch**. A definição via método set de dependências obrigatórias não é aconselhada, devido a possibilidade de esquecimento, do desenvolvedor, de definir a dependência antes de chamar o método fetch. A definição de dependências dentro do método também não é aconselhada, pois aumenta a responsabilidade de método (além de buscar os produtos ele também deve saber como criar o manipulador de produtos) e dificulta a criação de testes para `ProductController`. Assim, a primeira forma de injeção de dependências é a mais aconselhada. Antes de continuar aconselha-se a leitura da [PSR-11](https://www.php-fig.org/psr/psr-11/), [IoC](https://pt.wikipedia.org/wiki/Invers%C3%A3o_de_controle) e [DI](http://best-practice-software-engineering.ifs.tuwien.ac.at/patterns/dependency_injection.html).
 
-## 5.4 Usando *Containers*
+## 5.4. Usando *Containers*
 
 O Slim possui suporte a utilização de *containers* por meio do **Pimple** <sup>[20](#pimple)</sup>. O ([Exemplo 5.4.1](#ex5dot4dot1)) mostra a utilização de containers para satisfazer as dependências de `ProductController` e `Product`. Observação: lembre-se de criar o banco de dados e inserir as credenciais corretas.
 
@@ -741,7 +741,7 @@ class ProductController
 
     public function fetch($request, $response)
     {
-        $data = $this->prodEnt->fetch();
+        $data = $this->prod->fetch();
         return $response->withJson($data);
     }
 }
@@ -1037,7 +1037,7 @@ class Product
 
 ## 7.1. Introdução
 
-Chegamos finalmente à ultima camada. Até aqui, nossa aplicação apenas exibe `json`. Um servidor de API deve executar isso (e mais algumas operações, por exemplo, autenticação e validação, mas deve evitar ter uma interface específica). Em aplicações robustas o desenvolvimento é dividido em duas partes: A construção do servidor de API e a construção das aplicações de *frontend*. Uma aplicação de frontend pode ser de qualquer tipo: um aplicativo nativo para android, uma aplicação web que roda no navegador, um programa instalado no computador etc. Quando mais genérico é o retorno do servidor de API (retorno em `json` é um bom formato), mais fácil é criar multiplas aplicações de frontend.
+Chegamos finalmente à ultima camada. Até aqui, nossa aplicação apenas exibe `json`. Um servidor de API deve executar isso (e mais algumas operações, por exemplo, autenticação e validação, mas deve evitar ter uma interface específica). Em aplicações robustas o desenvolvimento é dividido em duas partes: A construção do servidor de API e a construção das aplicações de *frontend*. Uma aplicação de frontend pode ser de qualquer tipo: um aplicativo nativo para android, uma aplicação web que roda no navegador, um programa instalado no computador etc. Quanto mais genérico é o retorno do servidor de API (retorno em `json` é um bom formato), mais fácil é criar multiplas aplicações de frontend.
 
 ## 7.2. Considerações Iniciais
 
@@ -1143,7 +1143,7 @@ O arquivo **index.html** contém todos os elementos necessários para exibir, re
 ```
 <center><sup>Exemplo 7.3.1. Estrutura html da aplicação</sup></center>
 
-Estamos utilizando três dependências externas: (1) Vue.js<sup>[23](#vuejs)</sup> utilizado para facilitar a manipulação das informações de produtos na estrutura html; (2) Vue Resource<sup>[24](#vueresource)</sup>  utilizado para realização de requisições ao servidor de API (get, post, put e delete); (3) Uma fonte do google para deixar os textos mais agradáveis. O elemento `#productApp` é considerado raíz da aplicação e pode ser divido em quatro partes importantes. Na primeira, ([Figura 7.3.2](#fig7dot3dot2)), é feita a associação da variável do javascript que armazena o nome do produto a ser cadastrado. Na segunda, ([Figura 7.3.3](#fig7dot3dot3)), é feita a associação da variável que contém o nome do produto a ser editado. Na terceira, ([Figura 7.3.4](#fig7dot3dot4)), são associadas as variáveis que armazenam as informações do produto a ser exibido. Na última parte, ([Figura 7.3.5](#fig7dot3dot5)), a lista de produtos é processada e exibida em uma tabela.
+Estamos utilizando três dependências externas: (1) Vue.js<sup>[23](#vuejs)</sup> utilizado para facilitar a manipulação das informações de produtos na estrutura html; (2) Vue Resource<sup>[24](#vueresource)</sup>  utilizado para realização de requisições ao servidor de API (get, post, put e delete); (3) Uma fonte do google para deixar os textos mais agradáveis. O elemento `#productApp` é considerado raíz da aplicação e pode ser dividido em quatro partes importantes. Na primeira, ([Figura 7.3.2](#fig7dot3dot2)), é feita a associação da variável do javascript que armazena o nome do produto a ser cadastrado. Na segunda, ([Figura 7.3.3](#fig7dot3dot3)), é feita a associação da variável que contém o nome do produto a ser editado. Na terceira, ([Figura 7.3.4](#fig7dot3dot4)), são associadas as variáveis que armazenam as informações do produto a ser exibido. Na última parte, ([Figura 7.3.5](#fig7dot3dot5)), a lista de produtos é processada e exibida em uma tabela.
 
 <sup id="fig7dot3dot2"></sup>
 ```html
