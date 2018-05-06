@@ -1303,6 +1303,13 @@ var app = new Vue({
 ```
 <center><sup>Exemplo 7.4.1. Conteúdo de app.js</sup></center>
 
+Nosso conteúdo js é um pouco grande, no entanto, é bastante simples de entender. Podemos descrevê-lo em quatro etapas:
+
+1. **el**: Contém o identificador do elemento html que representa a raiz da aplicação Vue.
+2. **data**: Contém todas as variáveis utilizadas: **products** representa os produtos carregados ao acessar a página; **productToUpdate** indica o produto que será editado ao clicar no link "Editar" em alguma linha da tabela de produtos; **productToCreate** representa o produto que será criado no botão "Cadastrar"; **productToSee** contém todas as informações de um produto quando o link "Mais informações" é clicado; **showUpdateContainer** e **showInfoContainer** são *flags* que controlam a exibição dos campos de edição e mais informações de produtos.
+3. **methods**: contém as operações que necessitam de interação com o usuário. É por meio dessas operações que é feita a maior parte da interação com o servidor de api.
+4. **created**: esta função é um *Lifecycle Hook*<sup>[25](#vuelifecycle)</sup>, ela é executada pelo Vue assim que a instância armazenada em *app* é criada. No nosso caso, utilizamos para realizar a busca de todos os produtos.
+
 # 7.5. Um pouco de estilo
 
 O ([Exemplo 7.5.1](#ex7dot5dot1)) apresenta um possível estilo para a aplicação.
@@ -1407,5 +1414,7 @@ button:hover {
 <b id="vuejs">23</b> *Software Development Kit*. [[saber mais](https://vuejs.org/v2/guide/)]
 
 <b id="vueresource">24</b> *Vue Resource Doc*. [[saber mais](https://github.com/pagekit/vue-resource/blob/develop/docs/http.md)]
+
+<b id="vueresource">25</b> *Vue Lifecycle Hooks*. [[saber mais](https://vuejs.org/v2/api/#Options-Lifecycle-Hooks)]
 
 ---
