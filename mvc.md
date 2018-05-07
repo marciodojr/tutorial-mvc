@@ -1041,7 +1041,35 @@ Chegamos finalmente à ultima camada. Até aqui, nossa aplicação apenas exibe 
 
 ## 7.2. Considerações Iniciais
 
-Apesar de indicada a construção de um projeto específico para o *frontend*, inicialmente, criaremos nossa view dentro do mesmo projeto. Ao término da view faremos a separação. Esta abordagem será executada por motivos didáticos.
+Apesar de indicada a construção de um projeto específico para o *frontend*, inicialmente, criaremos nossa *view* dentro do mesmo projeto. Ao término faremos a separação. Esta abordagem será executada por motivos didáticos. 
+
+Ao desenvolver o *frontend* é bastante comum que exista um router (preferencialmente definido no próprio *frontend*) responsável por manipular as rotas que fornecem as estruturas html onde serão adicionadas as informações obtidas do servidor de API. Dada a simplicidade de nossa aplicação, utilizaremos o router do *backend* (apenas no início). O ([Exemplo 7.2.1](#ex7dot2dot1)) apresenta a modificação necessária para adicionar uma rota para nossa *view*.
+
+<sup id="ex7dot2dot1"></sup>
+```php
+<?php
+// app/src/routes.php
+
+$router->group('/produtos', function () {
+    // GET /produtos: retorna uma lista de produtos no formato json
+    $this->get('', 'TutorialMvc\Controller\ProductController:fetch');
+    // GET /produtos/{id}: retorna o produto cujo id é "id"
+    $this->get('/{id}', 'TutorialMvc\Controller\ProductController:find');
+    // POST /produtos: cria um novo produto
+    $this->post('', 'TutorialMvc\Controller\ProductController:create');
+    // PUT /produtos/{id}: atualiza o produto cujo id é "id"
+    $this->put('/{id}', 'TutorialMvc\Controller\ProductController:update');
+    // DELETE /produtos/{id}: remove o produto cujo id é "id"
+    $this->delete('/{id}', 'TutorialMvc\Controller\ProductController:delete');
+});
+
+// return the view
+$router->get('/', function ($request, $response) {
+    return $response->write(file_get_contents(__DIR__ . '/../public/app.html'));
+});
+
+```
+<center><sup>Exemplo 7.2.1. Configuração da rota para servir o arquivo app.html</sup></center>
 
 ## 7.3. Construindo a estrutura HTML
 
@@ -1411,7 +1439,7 @@ button:hover {
 ---
 <center>Notas de Rodapé</center>
 
-<b id="vuejs">23</b> *Software Development Kit*. [[saber mais](https://vuejs.org/v2/guide/)]
+<b id="vuejs">23</b> *Vue Doc*. [[saber mais](https://vuejs.org/v2/guide/)]
 
 <b id="vueresource">24</b> *Vue Resource Doc*. [[saber mais](https://github.com/pagekit/vue-resource/blob/develop/docs/http.md)]
 
