@@ -560,16 +560,16 @@ use TutorialMvc\Model\Product;
 class ProductController
 {
 
-    private $prodEnt;
+    private $prod;
 
     public function __construct(Product $p)
     {
-        $this->prodEnt = $p;
+        $this->prod = $p;
     }
 
     public function fetch($request, $response)
     {
-        $data = $this->prodEnt->fetch();
+        $data = $this->prod->fetch();
         return $response->withJson($data);
     }
 }
@@ -626,9 +626,9 @@ class ProductController
         // resolving Product dependency
         // ...
         // Product instance
-        $prodEnt = new Product($dependency);
+        $prod = new Product($dependency);
 
-        $data = $prodEnt->fetch();
+        $data = $prod->fetch();
         return $response->withJson($data);
     }
 }
